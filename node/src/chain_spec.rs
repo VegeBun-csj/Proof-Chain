@@ -76,6 +76,7 @@ pub fn development_config() -> ChainSpec {
 		ChainType::Development,
 		move || {
 			testnet_genesis(
+				get_account_id_from_seed::<sr25519::Public>("Alice"),
 				// initial collators.
 				vec![
 					(
@@ -131,6 +132,7 @@ pub fn local_testnet_config() -> ChainSpec {
 		ChainType::Local,
 		move || {
 			testnet_genesis(
+				get_account_id_from_seed::<sr25519::Public>("Alice"),
 				// initial collators.
 				vec![
 					(
@@ -178,6 +180,7 @@ pub fn local_testnet_config() -> ChainSpec {
 }
 
 fn testnet_genesis(
+	root_key: AccountId,
 	invulnerables: Vec<(AccountId, AuraId)>,
 	endowed_accounts: Vec<AccountId>,
 	id: ParaId,
@@ -191,6 +194,7 @@ fn testnet_genesis(
 		balances: parachain_template_runtime::BalancesConfig {
 			balances: endowed_accounts.iter().cloned().map(|k| (k, 1 << 60)).collect(),
 		},
+		sudo: parachain_template_runtime::SudoConfig { key: Some(root_key)},
 		parachain_info: parachain_template_runtime::ParachainInfoConfig { parachain_id: id },
 		collator_selection: parachain_template_runtime::CollatorSelectionConfig {
 			invulnerables: invulnerables.iter().cloned().map(|(acc, _)| acc).collect(),

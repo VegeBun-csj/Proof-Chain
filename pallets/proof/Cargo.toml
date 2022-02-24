@@ -1,8 +1,8 @@
 [package]
-name = "pallet-template"
+name = "pallet-proof"
 authors = ["Anonymous"]
-description = "FRAME pallet template for defining custom runtime logic."
-version = "0.1.0"
+description = "proof pallet for save some proof in substrated-based blockchain"
+version = "4.0.0-dev"
 license = "Unlicense"
 homepage = "https://substrate.io"
 repository = "https://github.com/paritytech/substrate/"
@@ -18,6 +18,7 @@ scale-info = { version = "1.0.0", default-features = false, features = ["derive"
 frame-benchmarking = { git = "https://github.com/paritytech/substrate", default-features = false, optional = true , branch = "polkadot-v0.9.16" }
 frame-support = { git = "https://github.com/paritytech/substrate", default-features = false , branch = "polkadot-v0.9.16" }
 frame-system = { git = "https://github.com/paritytech/substrate", default-features = false , branch = "polkadot-v0.9.16" }
+sp-std = { git = "https://github.com/paritytech/substrate", default-features = false , branch = "polkadot-v0.9.16" }
 
 [dev-dependencies]
 serde = { version = "1.0.132" }
