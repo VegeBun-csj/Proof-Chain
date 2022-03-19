@@ -59,6 +59,8 @@ use xcm_executor::{Config, XcmExecutor};
 
 pub use cumulus_ping;
 
+pub use pallet_kitties;
+
 /// Alias to 512-bit hash when used in the context of a transaction signature on the chain.
 pub type Signature = MultiSignature;
 
@@ -450,13 +452,15 @@ match_type! {
 	};
 }
 
-/// 配置parachain2000和parachain3000之间可以进行消息传递
+// 配置parachain之间可以进行消息传递
 match_type! {
 	pub type SpecParachain: impl Contains<MultiLocation> = {
-		// 当前上一级中继链下的parachain 2000
-		MultiLocation {parents: 1, interior: X1(Parachain(2000))} |
-		// 当前上一级中继链下的parachain 3000
-		MultiLocation {parents: 1, interior: X1(Parachain(3000))}
+		// Proof parachain
+		MultiLocation {parents: 1, interior: X1(Parachain(3000))} |
+		// Asset parachain
+		MultiLocation {parents: 1, interior: X1(Parachain(4000))} |
+		// ping parachain
+		MultiLocation {parents: 1, interior: X1(Parachain(5000))}
 	};
 }
 
@@ -610,6 +614,20 @@ impl cumulus_ping::Config for Runtime {
 	type XcmSender = XcmRouter;
 }
 
+impl pallet_randomness_collective_flip::Config for Runtime {}
+
+parameter_types! {
+    pub const ReservationFee: Balance = 10;
+}
+
+impl pallet_kitties::Config for Runtime {
+	type Event = Event;
+	type Randomness = RandomnessCollectiveFlip;
+	type Currency = Balances;
+	type KittyIndex = u64;
+	type ReservationFee = ReservationFee;
+}
+
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
@@ -626,6 +644,7 @@ construct_runtime!(
 		Timestamp: pallet_timestamp::{Pallet, Call, Storage, Inherent} = 2,
 		ParachainInfo: parachain_info::{Pallet, Storage, Config} = 3,
 		Sudo: pallet_sudo::{Pallet, Call, Storage, Config<T>, Event<T>},
+		RandomnessCollectiveFlip: pallet_randomness_collective_flip::{Pallet, Storage},
 
 		// Monetary stuff.
 		Balances: pallet_balances::{Pallet, Call, Storage, Config<T>, Event<T>} = 10,
@@ -646,6 +665,8 @@ construct_runtime!(
 
 		// ping pong
 		PingPong: cumulus_ping::{Pallet, Call, Storage, Event<T>},
+		KittiesModule: pallet_kitties::{Pallet, Call, Storage, Event<T>},
+
 	}
 );
 

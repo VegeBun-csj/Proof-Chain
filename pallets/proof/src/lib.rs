@@ -119,5 +119,14 @@ pub mod pallet {
 
 			Ok(().into())
 		}
+
+		// 销售存证
+		// #[pallet::weight(0)]
+		// pub fn sell_claim(
+		// 	origin: OriginFor<T>, // 交易的发送方
+		// 	claim: Vec<u8>, // 存证
+		// ) -> DispatchResultWithPostInfo{
+
+		// }
 	}
 }
