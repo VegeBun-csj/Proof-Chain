@@ -5741,6 +5741,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "pallet-xclient"
+version = "4.0.0-dev"
+dependencies = [
+ "cumulus-primitives-core",
+ "frame-support",
+ "frame-system",
+ "parity-scale-codec",
+ "serde",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "xcm",
+]
+
+[[package]]
 name = "pallet-xcm"
 version = "0.9.16"
 source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.16#41ab002d7451766324a9f314fee11c9c53314350"
