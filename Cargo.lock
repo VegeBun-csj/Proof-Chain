@@ -46,6 +46,7 @@ dependencies = [
  "pallet-timestamp",
  "pallet-transaction-payment",
  "pallet-transaction-payment-rpc-runtime-api",
+ "pallet-xclient",
  "pallet-xcm",
  "parachain-info",
  "parity-scale-codec",
@@ -5748,10 +5749,12 @@ dependencies = [
  "frame-support",
  "frame-system",
  "parity-scale-codec",
+ "scale-info",
  "serde",
  "sp-core",
  "sp-io",
  "sp-runtime",
+ "sp-std",
  "xcm",
 ]
 

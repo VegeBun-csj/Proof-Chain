@@ -24,7 +24,8 @@ smallvec = "1.6.1"
 
 # Local Dependencies
 cumulus-ping = { path = "../pallets/ping", default-features = false }
-pallet-kitties ={ path = "../pallets/kitties", default-features = false}
+pallet-kitties = { path = "../pallets/kitties", default-features = false}
+pallet-xclient = { path = "../pallets/xclient", default-features = false }
 
 # Substrate Dependencies
 ## Substrate Primitive Dependencies
@@ -114,6 +115,7 @@ std = [
 	"pallet-sudo/std",
 	"pallet-timestamp/std",
 	"pallet-kitties/std",
+	"pallet-xclient/std",
 	"pallet-randomness-collective-flip/std",
 	"pallet-transaction-payment-rpc-runtime-api/std",
 	"pallet-transaction-payment/std",

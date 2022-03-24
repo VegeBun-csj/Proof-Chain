@@ -1,15 +1,18 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
 pub use pallet::*;
+use scale_info::TypeInfo;
 
 #[frame_support::pallet]
 pub mod pallet {
 	use cumulus_primitives_core::ParaId;
 	use frame_support::{dispatch::DispatchResultWithPostInfo, pallet_prelude::*};
 	use frame_system::pallet_prelude::*;
-	use xcm::v0::{Junction, OriginKind, SendXcm, Xcm};
+	use xcm::latest::prelude::*;
+	use sp_std::vec::Vec;
+	use sp_std::vec;
 
-	#[derive(Encode, Decode, Clone, PartialEq, Eq, Default, RuntimeDebug)]
+	#[derive(Encode, Decode, Clone, PartialEq, Eq, Default, RuntimeDebug, TypeInfo)]
 	pub struct XregisterCall<AccountId> {
 		// 这里的call_index是一个长度为2的vec，其中第一个参数为pallet名，第二个参数为pallet的方法名
 		// 也就是调用哪个pallet的哪个方法
@@ -33,11 +36,6 @@ pub mod pallet {
 		/// The XCM sender module.
 		type XcmSender: SendXcm;
 
-		/// ----------------------------------------------
-		/// 平行链ID -> palletId -> pallet_methodId (在runtime中进行指定)
-		/// Xregister server's parachain ID
-		type XregisterServerParachainId: Get<ParaId>;
-
 		/// Xregister Pallet ID in xregister server
 		type XregisterPalletID: Get<u8>;
 
@@ -51,6 +49,7 @@ pub mod pallet {
 
 	#[pallet::pallet]
 	#[pallet::generate_store(pub(super) trait Store)]
+	#[pallet::without_storage_info]
 	pub struct Pallet<T>(_);
 
 	#[pallet::event]
@@ -84,11 +83,11 @@ pub mod pallet {
 			);
 
 			// build the xcm transact message
-			let message = Xcm::Transact {
+			let message = Xcm(vec![Instruction::Transact {
 				origin_type: OriginKind::Native,
-				require_weight_at_most: T::XregisterWeightAtMost::get(),    //在runtime中指定
+				require_weight_at_most: T::XregisterWeightAtMost::get(), //在runtime中指定
 				call: call.encode().into(),
-			};
+			}]);
 
 			// send the message to xregister server chain
 			// 这里调用进行跨链调用交易的时候其实是一个层级关系:
@@ -98,11 +97,7 @@ pub mod pallet {
 			// 把下面的message发送到destination parachain上
 			// 然后根据message中的call进行相关pallet方法的调用
 			match T::XcmSender::send_xcm(
-				(
-					Junction::Parent,
-					Junction::Parachain(T::XregisterServerParachainId::get().into()),
-				)
-					.into(),
+				(1, Junction::Parachain(4000u32.into())),
 				message,
 			) {
 				// send_xcm结果是一个result

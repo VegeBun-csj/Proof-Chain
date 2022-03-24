@@ -31,6 +31,7 @@ use frame_support::{
 	},
 	PalletId,
 };
+use cumulus_primitives_core::ParaId;
 use frame_system::{
 	limits::{BlockLength, BlockWeights},
 	EnsureRoot,
@@ -61,6 +62,7 @@ pub use cumulus_ping;
 
 pub use pallet_kitties;
 
+pub use pallet_xclient;
 /// Alias to 512-bit hash when used in the context of a transaction signature on the chain.
 pub type Signature = MultiSignature;
 
@@ -458,9 +460,7 @@ match_type! {
 		// Proof parachain
 		MultiLocation {parents: 1, interior: X1(Parachain(3000))} |
 		// Asset parachain
-		MultiLocation {parents: 1, interior: X1(Parachain(4000))} |
-		// ping parachain
-		MultiLocation {parents: 1, interior: X1(Parachain(5000))}
+		MultiLocation {parents: 1, interior: X1(Parachain(4000))} 
 	};
 }
 
@@ -628,6 +628,18 @@ impl pallet_kitties::Config for Runtime {
 	type ReservationFee = ReservationFee;
 }
 
+parameter_types! {
+	pub const XregisterWeightAtMost: u32 = 1_000_000;
+}
+
+impl pallet_xclient::Config for Runtime {
+	type Event = Event;
+	type XcmSender = XcmRouter;
+	type XregisterPalletID = u8;
+	type XregisterMethodID = u8;
+	type XregisterWeightAtMost = XregisterWeightAtMost;
+}
+
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
@@ -666,7 +678,7 @@ construct_runtime!(
 		// ping pong
 		PingPong: cumulus_ping::{Pallet, Call, Storage, Event<T>},
 		KittiesModule: pallet_kitties::{Pallet, Call, Storage, Event<T>},
-
+		Xclient: pallet_xclient::{Pallet, Call, Storage, Event<T>},
 	}
 );
 
