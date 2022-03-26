@@ -31,10 +31,12 @@ Require Rust version:`nightly-2021-11-07-x86_64-unknown-linux-gnu`
 --chain rococo-local-parachain-3000-raw.json \
 --base-path /tmp/parachain/alice \
 --port 40333 \
+--rpc-port 9133 \
 --ws-port 8844 \
 -- \
 --execution wasm \
 --chain ../../polkadot-0.9.16/rococo-local-cfde.json \ 
 --port 30343 \
+--rpc-port 9134 \
 --ws-port 9977
 ```

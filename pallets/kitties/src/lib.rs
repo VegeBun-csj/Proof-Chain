@@ -68,6 +68,8 @@ pub mod pallet {
 		SellingKitty(T::KittyIndex, BalanceOf<T>),
 		// 已经出售的kittyid,原有的主人，新主人
 		SeltKitty(T::KittyIndex, T::AccountId, T::AccountId),
+		// 已经移除kitty
+		RemovedKitty(T::AccountId, T::KittyIndex),
 	}
 
 	/// 定义存储
@@ -310,6 +312,24 @@ pub mod pallet {
 
 			Self::deposit_event(Event::SeltKitty(kitty_id, old_owner, new_owner));
 
+			Ok(())
+		}
+
+		// 移除kitty
+		#[pallet::weight(0)]
+		pub fn remove_kitty(
+			origin: OriginFor<T>,
+			kitty_id: T::KittyIndex,
+		) -> DispatchResult{
+			let owner = ensure_signed(origin)?;
+			// 如果在交易市场的话，首先从交易市场移除
+			if <KittyMarket<T>>::contains_key(kitty_id) {
+				<KittyMarket<T>>::remove(kitty_id);
+			}else{
+				()
+			}
+			<Kitties<T>>::remove(kitty_id);
+			Self::deposit_event(Event::RemovedKitty(owner, kitty_id));
 			Ok(())
 		}
 	}

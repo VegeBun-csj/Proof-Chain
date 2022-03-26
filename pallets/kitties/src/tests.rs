@@ -107,3 +107,5 @@ fn buy_kitty_work(){
 		assert_noop!(KittiesModule::buy_kitties(Origin::signed(2),0),Error::<Test>::InvalidKittyIndex);
 	})
 }
+
+/// 移除kitty测试

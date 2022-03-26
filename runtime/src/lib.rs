@@ -635,8 +635,6 @@ parameter_types! {
 impl pallet_xclient::Config for Runtime {
 	type Event = Event;
 	type XcmSender = XcmRouter;
-	type XregisterPalletID = u8;
-	type XregisterMethodID = u8;
 	type XregisterWeightAtMost = XregisterWeightAtMost;
 }
 

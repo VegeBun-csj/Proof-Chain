@@ -8,9 +8,8 @@ pub mod pallet {
 	use cumulus_primitives_core::ParaId;
 	use frame_support::{dispatch::DispatchResultWithPostInfo, pallet_prelude::*};
 	use frame_system::pallet_prelude::*;
+	use sp_std::{vec, vec::Vec};
 	use xcm::latest::prelude::*;
-	use sp_std::vec::Vec;
-	use sp_std::vec;
 
 	#[derive(Encode, Decode, Clone, PartialEq, Eq, Default, RuntimeDebug, TypeInfo)]
 	pub struct XregisterCall<AccountId> {
@@ -35,13 +34,6 @@ pub mod pallet {
 
 		/// The XCM sender module.
 		type XcmSender: SendXcm;
-
-		/// Xregister Pallet ID in xregister server
-		type XregisterPalletID: Get<u8>;
-
-		/// Xregister Method ID in xregister server
-		type XregisterMethodID: Get<u8>;
-		/// ----------------------------------------------
 
 		/// Xregister maximum weight
 		type XregisterWeightAtMost: Get<u64>;
@@ -71,14 +63,18 @@ pub mod pallet {
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
 		#[pallet::weight(0)]
-		pub fn xregister(origin: OriginFor<T>, name: Vec<u8>) -> DispatchResultWithPostInfo {
+		pub fn xregister(
+			origin: OriginFor<T>,
+			pallet_id: u8,
+			method_id: u8,
+			name: Vec<u8>,
+		) -> DispatchResultWithPostInfo {
 			let who = ensure_signed(origin)?;
-
 			// 构造一个registercall的请求
 			let call = XregisterCall::<T::AccountId>::new(
-				T::XregisterPalletID::get(), // palletId
-				T::XregisterMethodID::get(), // pallet中的mathod Id
-				who.clone(),                 // accountId
+				pallet_id, // palletId
+				method_id, // pallet中的mathod Id
+				who.clone(),          // accountId
 				name.clone(),                // 注册的name
 			);
 
@@ -96,10 +92,7 @@ pub mod pallet {
 
 			// 把下面的message发送到destination parachain上
 			// 然后根据message中的call进行相关pallet方法的调用
-			match T::XcmSender::send_xcm(
-				(1, Junction::Parachain(4000u32.into())),
-				message,
-			) {
+			match T::XcmSender::send_xcm((1, Junction::Parachain(4000u32.into())), message) {
 				// send_xcm结果是一个result
 				Ok(()) => {
 					// emit the event if send successfully
